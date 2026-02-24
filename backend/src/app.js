@@ -5,29 +5,32 @@ const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
-// CORS - MUST be before other middleware
-app.use(cors({
-  origin: '*',  // Allow all origins for now
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://food-delivery-9q17ypve7-shamik225s-projects.vercel.app/',
+];
 
-// Handle OPTIONS preflight
-app.options('*', cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://food-delivery-9q17ypve7-shamik225s-projects.vercel.app/',
+    'https://*.vercel.app',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}
 
-// Body parser
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK' });
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date() });
 });
 
 module.exports = app;
